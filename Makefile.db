@@ -1,0 +1,23 @@
+
+##
+# Config
+#
+DBROOT=/home/mysql
+DBUSR=backupuser
+DBPWD=backuppass
+
+
+# MyISAM
+%.sql.gz: $(DBROOT)/$(DB)/%.MYD $(DBROOT)/$(DB)/%.MYI $(DBROOT)/$(DB)/%.frm
+	$(eval TBL := $*)
+	mysqldump -u$(DBUSR) -p$(DBPWD) $(DB) $(TBL) | gzip -9 > $@
+
+# InnoDb
+%.sql.gz: $(DBROOT)/$(DB)/%.ibd $(DBROOT)/$(DB)/%.frm
+	$(eval TBL := $*)
+	mysqldump -u$(DBUSR) -p$(DBPWD) $(DB) $(TBL) | gzip -9 > $@
+
+# Memory
+%.sql.gz: $(DBROOT)/$(DB)/%.frm
+	$(eval TBL := $*)
+	mysqldump -u$(DBUSR) -p$(DBPWD) $(DB) $(TBL) | gzip -9 > $@
